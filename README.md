@@ -107,4 +107,4 @@ FINAL VALIDATION SUMMARY
 - Fallback patterns for data extraction
 - Clear error reporting for failed validations
 
-This system provides the foundation for the full automated invoice validation workflow described in the PRD.
+This system provides the foundation for the full automated invoice validation workflow described in the PRD."# invoice-validator-web" 
