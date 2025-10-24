@@ -119,7 +119,12 @@ if __name__ == '__main__':
     print("[STARTING] Invoice Validation Web Application")
     print("Upload folder:", UPLOAD_FOLDER)
     print("Excel file:", EXCEL_FILE)
-    print("Navigate to: http://127.0.0.1:5000")
+    
+    # Use environment variable for port (Railway will set this)
+    port = int(os.environ.get('PORT', 5000))
+    host = '0.0.0.0'  # Allow external connections
+    
+    print(f"Navigate to: http://{host}:{port}")
     print("-" * 50)
     
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=False, host=host, port=port)
