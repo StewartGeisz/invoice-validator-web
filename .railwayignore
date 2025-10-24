@@ -1,0 +1,8 @@
+node_modules/
+client/
+package.json
+package-lock.json
+api/
+lib/
+vercel.json
+.vercel/
