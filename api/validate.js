@@ -1,50 +1,13 @@
 import formidable from 'formidable';
 import fs from 'fs/promises';
 import path from 'path';
+import PDFValidator from '../lib/pdfValidator.js';
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-// Mock validation function for demonstration
-function generateMockValidation(filename, index = 0) {
-  const mockVendors = [
-    "The Budd Group",
-    "Mid South Instrument Services Inc.", 
-    "John Bouchard & Sons",
-    "Atlas Copco",
-    "Evoqua Water Technologies"
-  ];
-  
-  const mockPOs = ["P26000686", "P26003063", "P25063542", "P22052202", "P24000969"];
-  
-  // Randomly determine validation results for demo
-  const vendorIndex = index % mockVendors.length;
-  const isValid = Math.random() > 0.3; // 70% success rate for demo
-  
-  return {
-    vendor: mockVendors[vendorIndex],
-    method: "mock_validation_vercel",
-    po_valid: isValid ? true : Math.random() > 0.5,
-    po_reason: isValid ? "PO number found in document" : "Expected PO not found",
-    expected_po: mockPOs[vendorIndex],
-    date_valid: isValid ? true : Math.random() > 0.5,
-    date_reason: isValid ? "Dates fall within contract period" : "Dates outside contract period", 
-    dates_found: ["2024-10-24", "2024-10-15"],
-    valid_dates: isValid ? ["2024-10-24", "2024-10-15"] : [],
-    rate_valid: isValid ? true : Math.random() > 0.5,
-    rate_reason: isValid ? "Amount within expected range" : "Amount outside expected range",
-    rate_type: Math.random() > 0.5 ? "annual" : "monthly",
-    expected_amount: 25000 + (Math.random() * 75000),
-    amounts_found: [25000 + (Math.random() * 75000)],
-    is_variable_rate: Math.random() > 0.8,
-    contact_person: isValid ? "Jane Manager" : "John Admin",
-    contact_role: isValid ? "Director/Manager" : "Admin/Main Contact", 
-    contact_reason: isValid ? "All validations passed" : "Validation issues require attention"
-  };
-}
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -111,8 +74,15 @@ export default async function handler(req, res) {
       try {
         console.log(`Validating: ${file.originalFilename}`);
 
-        // Generate mock validation result
-        const validationResult = generateMockValidation(file.originalFilename, i);
+        // Initialize validator and load data if needed
+        const validator = new PDFValidator();
+        await validator.loadVendorData();
+
+        // Read file buffer
+        const fileBuffer = await fs.readFile(file.filepath);
+
+        // Process with real validation logic
+        const validationResult = await validator.processFile(fileBuffer, file.originalFilename);
 
         results.push({
           filename: file.originalFilename || `file-${i}.pdf`,
@@ -143,9 +113,8 @@ export default async function handler(req, res) {
     // Return results
     const response = {
       success: true,
-      message: `Processed ${results.length} files`,
-      results: results,
-      note: "This is a demo version with mock validation results. Deploy the Python service for real validation."
+      message: `Processed ${results.length} files with real PDF validation`,
+      results: results
     };
 
     console.log(`Returning results for ${results.length} files`);
