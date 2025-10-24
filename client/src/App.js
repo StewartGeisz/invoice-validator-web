@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import ValidationResults from './components/ValidationResults';
+import MultipleValidationResults from './components/MultipleValidationResults';
 import Header from './components/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -65,18 +66,28 @@ function App() {
                 <div className="card">
                   <div className="card-body py-5">
                     <div className="loading-spinner mb-3"></div>
-                    <h4>Validating Invoice...</h4>
+                    <h4>Validating Invoice(s)...</h4>
                     <p className="text-muted">
-                      Processing PDF and running validation checks...
+                      Processing PDF files and running validation checks...
                     </p>
                   </div>
                 </div>
               </div>
             ) : (
-              <ValidationResults 
-                result={validationResult}
-                onNewUpload={handleNewUpload}
-              />
+              // Handle both single and multiple results
+              validationResult.results ? (
+                <MultipleValidationResults 
+                  results={validationResult.results}
+                  message={validationResult.message}
+                  note={validationResult.note}
+                  onNewUpload={handleNewUpload}
+                />
+              ) : (
+                <ValidationResults 
+                  result={validationResult}
+                  onNewUpload={handleNewUpload}
+                />
+              )
             )}
           </div>
         </div>

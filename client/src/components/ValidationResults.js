@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ValidationResults = ({ result, onNewUpload }) => {
+const ValidationResults = ({ result, onNewUpload, hideNewUploadButton = false }) => {
   const { filename, result: validationData } = result;
 
   // Helper functions
@@ -305,17 +305,19 @@ const ValidationResults = ({ result, onNewUpload }) => {
           </div>
 
           {/* Actions Card */}
-          <div className="card mt-3">
-            <div className="card-body text-center">
-              <button 
-                onClick={onNewUpload}
-                className="btn btn-primary"
-              >
-                <i className="fas fa-plus me-2"></i>
-                Validate Another Invoice
-              </button>
+          {!hideNewUploadButton && (
+            <div className="card mt-3">
+              <div className="card-body text-center">
+                <button 
+                  onClick={onNewUpload}
+                  className="btn btn-primary"
+                >
+                  <i className="fas fa-plus me-2"></i>
+                  Validate Another Invoice
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
