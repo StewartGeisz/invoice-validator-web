@@ -1,0 +1,36 @@
+{
+  "name": "invoice-validation-app",
+  "version": "1.0.0",
+  "description": "Invoice validation web application with Node.js backend and React frontend",
+  "main": "server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "vercel-build": "cd client && npm install && npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "formidable": "^3.5.4",
+    "fs-extra": "^11.1.1",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "invoice",
+    "validation",
+    "pdf",
+    "react",
+    "node"
+  ],
+  "author": "Invoice Validation System",
+  "license": "MIT"
+}

@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Header Card -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2>
+                    <i class="fas fa-file-alt text-primary"></i>
+                    Validation Results: {{ filename }}
+                </h2>
+                
+                {% set all_passed = (result.po_valid == true and result.date_valid == true and result.rate_valid == true) %}
+                {% set any_failed = (result.po_valid == false or result.date_valid == false or result.rate_valid == false) %}
+                
+                {% if all_passed %}
+                    <span class="status-badge status-pass">
+                        <i class="fas fa-check-circle"></i> FULLY VALIDATED
+                    </span>
+                {% elif any_failed %}
+                    <span class="status-badge status-fail">
+                        <i class="fas fa-exclamation-triangle"></i> VALIDATION FAILED
+                    </span>
+                {% else %}
+                    <span class="status-badge status-warn">
+                        <i class="fas fa-info-circle"></i> PARTIAL VALIDATION
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Validation Results Column -->
+            <div class="col-lg-8">
+                
+                <!-- Vendor Identification -->
+                <div class="validation-section">
+                    <h5>
+                        <i class="fas fa-building text-primary"></i>
+                        Vendor Identification
+                    </h5>
+                    {% if result.vendor %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-pass me-3">
+                                <i class="fas fa-check"></i> IDENTIFIED
+                            </span>
+                            <strong>{{ result.vendor }}</strong>
+                        </div>
+                    {% else %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-fail me-3">
+                                <i class="fas fa-times"></i> NOT FOUND
+                            </span>
+                            <span class="text-muted">No matching vendor found in database</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- PO Number Validation -->
+                <div class="validation-section">
+                    <h5>
+                        <i class="fas fa-hashtag text-primary"></i>
+                        Purchase Order Number
+                    </h5>
+                    {% if result.po_valid == true %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-pass me-3">
+                                <i class="fas fa-check"></i> VALID
+                            </span>
+                            <span>PO Number <strong>{{ result.expected_po }}</strong> found in document</span>
+                        </div>
+                    {% elif result.po_valid == false %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-fail me-3">
+                                <i class="fas fa-times"></i> INVALID
+                            </span>
+                            <span>Expected PO <strong>{{ result.expected_po }}</strong> not found</span>
+                        </div>
+                    {% else %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-warn me-3">
+                                <i class="fas fa-question-circle"></i> UNKNOWN
+                            </span>
+                            <span class="text-muted">{{ result.po_reason or 'No PO data available' }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Date Validation -->
+                <div class="validation-section">
+                    <h5>
+                        <i class="fas fa-calendar text-primary"></i>
+                        Date Validation
+                    </h5>
+                    {% if result.date_valid == true %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-pass me-3">
+                                <i class="fas fa-check"></i> VALID
+                            </span>
+                            <span>Dates fall within contract period</span>
+                        </div>
+                        {% if result.valid_dates %}
+                            <div class="mt-2">
+                                <small class="text-muted">Valid dates found: 
+                                    {% for date in result.valid_dates %}
+                                        <span class="badge bg-success">{{ date }}</span>
+                                    {% endfor %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    {% elif result.date_valid == false %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-fail me-3">
+                                <i class="fas fa-times"></i> INVALID
+                            </span>
+                            <span>Dates outside contract period</span>
+                        </div>
+                        {% if result.dates_found %}
+                            <div class="mt-2">
+                                <small class="text-muted">Dates found: 
+                                    {% for date in result.dates_found %}
+                                        <span class="badge bg-danger">{{ date }}</span>
+                                    {% endfor %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-warn me-3">
+                                <i class="fas fa-question-circle"></i> UNKNOWN
+                            </span>
+                            <span class="text-muted">{{ result.date_reason or 'No date data available' }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Rate Validation -->
+                <div class="validation-section">
+                    <h5>
+                        <i class="fas fa-dollar-sign text-primary"></i>
+                        Rate Validation
+                    </h5>
+                    {% if result.rate_valid == true %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-pass me-3">
+                                <i class="fas fa-check"></i> VALID
+                            </span>
+                            {% if result.is_variable_rate %}
+                                <span>Variable rate - automatic pass</span>
+                            {% else %}
+                                <span>Amount within expected range (±5%)</span>
+                            {% endif %}
+                        </div>
+                        {% if result.expected_amount and not result.is_variable_rate %}
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    Expected: <strong>${{ "{:,.2f}".format(result.expected_amount) }}</strong>
+                                    {% if result.amounts_found %}
+                                        | Found: 
+                                        {% for amount in result.amounts_found %}
+                                            <span class="badge bg-success">${{ "{:,.2f}".format(amount) }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    {% elif result.rate_valid == false %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-fail me-3">
+                                <i class="fas fa-times"></i> INVALID
+                            </span>
+                            <span>Amount outside expected range</span>
+                        </div>
+                        {% if result.expected_amount %}
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    Expected: <strong>${{ "{:,.2f}".format(result.expected_amount) }}</strong>
+                                    {% if result.amounts_found %}
+                                        | Found: 
+                                        {% for amount in result.amounts_found %}
+                                            <span class="badge bg-danger">${{ "{:,.2f}".format(amount) }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </small>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="d-flex align-items-center">
+                            <span class="status-badge status-warn me-3">
+                                <i class="fas fa-question-circle"></i> UNKNOWN
+                            </span>
+                            <span class="text-muted">{{ result.rate_reason or 'No rate data available' }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Contact Information Column -->
+            <div class="col-lg-4">
+                <!-- Contact Person Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user text-primary"></i>
+                            Contact Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if result.contact_person and result.contact_person != 'Unknown' %}
+                            <div class="text-center mb-3">
+                                <i class="fas fa-user-circle fa-3x text-primary"></i>
+                            </div>
+                            <h6 class="text-center">{{ result.contact_person }}</h6>
+                            <p class="text-center text-muted">{{ result.contact_role }}</p>
+                            <hr>
+                            <small class="text-muted">
+                                <strong>Reason:</strong><br>
+                                {{ result.contact_reason }}
+                            </small>
+                        {% else %}
+                            <div class="text-center text-muted">
+                                <i class="fas fa-question-circle fa-3x mb-3"></i>
+                                <p>{{ result.contact_reason or 'No contact information available' }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-pie text-primary"></i>
+                            Validation Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    {% set passed = (result.vendor and (result.po_valid == true) + (result.date_valid == true) + (result.rate_valid == true)) %}
+                                    {% set total = ((result.po_valid is not none) + (result.date_valid is not none) + (result.rate_valid is not none)) %}
+                                    <h4 class="text-success">{{ passed or 0 }}</h4>
+                                    <small class="text-muted">Passed</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                {% set failed = ((result.po_valid == false) + (result.date_valid == false) + (result.rate_valid == false)) %}
+                                <h4 class="text-danger">{{ failed }}</h4>
+                                <small class="text-muted">Failed</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="card mt-3">
+                    <div class="card-body text-center">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Validate Another Invoice
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add some interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate cards on load
+    const cards = document.querySelectorAll('.validation-section, .card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}
