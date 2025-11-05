@@ -34,13 +34,13 @@ A Vercel-compatible web application that validates PDF invoices against a vendor
    - Supports multiple date formats (MM/DD/YYYY, YYYY-MM-DD, etc.)
 
 4. **Rate Validation**
-   - Compares PDF amounts against expected rates (±5% tolerance)
-   - Auto-passes if no rate specified (variable rate contracts)
-   - Searches for dollar amounts in PDF text
+   - Compares PDF amounts against expected rates (EXACT MATCH required)
+   - Auto-passes if no rate specified (variable rate contracts)  
+   - Searches for dollar amounts in PDF text using LLM analysis
 
 5. **Contact Person Logic**
-   - **All validations pass + fixed rate** → Contact Director/Manager
-   - **Any validation fails OR variable rate** → Contact Admin/Main Contact
+   - **All validations pass + fixed rate** → Contact Main Contact (Column I)
+   - **Any validation fails OR variable rate** → Contact FUM (Column D)
 
 ## Deployment to Vercel
 
