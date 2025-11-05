@@ -3,7 +3,7 @@ const fs = require('fs');
 
 console.log('Converting Excel to JSON...');
 try {
-  const workbook = XLSX.readFile('Service Agreement Table (Rolling).xlsx');
+  const workbook = XLSX.readFile('Service Agreement Table (Rolling) (1).xlsx');
   let sheetName = 'Service Agreements';
   if (!workbook.SheetNames.includes(sheetName)) {
     sheetName = workbook.SheetNames[0];

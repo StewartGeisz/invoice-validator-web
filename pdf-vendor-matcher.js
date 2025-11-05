@@ -903,7 +903,7 @@ Return ONLY valid JSON in this exact format:
 async function main() {
     console.log('Starting PDF Vendor Matcher...');
     
-    const excelPath = "Service Agreement Table (Rolling).xlsx";
+    const excelPath = "Service Agreement Table (Rolling) (1).xlsx";
     
     if (!fs.existsSync(excelPath)) {
         console.error(`Excel file not found: ${excelPath}`);
