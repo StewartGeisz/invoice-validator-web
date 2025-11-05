@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "pages/api/validate-pdf.js": {
+      "maxDuration": 30
+    }
+  }
+}
