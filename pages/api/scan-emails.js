@@ -1,6 +1,7 @@
 // pages/api/scan-emails.js
 import axios from 'axios';
 import PDFVendorMatcher from '../../lib/pdf-validator.js';
+import emailRecipients from '../../data/email-recipients.json';
 
 const AMPLIFY_API_URL = 'https://prod-api.vanderbilt.ai/microsoft/integrations';
 
@@ -74,6 +75,89 @@ async function downloadAttachment(messageId, attachmentId) {
   return null;
 }
 
+/**
+ * Sends a validation result email based on the outcome.
+ * This function now handles routing for both the source and the approvers.
+ * @param {object} validationResult The result from the PDF validator.
+ * @param {string} originalFilename The name of the PDF file.
+ */
+async function sendNotificationEmails(validationResult, originalFilename) {
+  const { vendor, po_valid, date_valid, rate_valid, is_variable_rate } = validationResult;
+  const overallSuccess = vendor && po_valid && date_valid && rate_valid && !is_variable_rate;
+
+  let feedbackSubject;
+  let feedbackBody;
+  let forwardEmail = null;
+
+  if (overallSuccess) {
+    // --- Success Case ---
+    feedbackSubject = `✅ Invoice Processed for ${vendor}`;
+    feedbackBody = `The invoice "${originalFilename}" was successfully validated and has been forwarded for approval.`;
+    
+    forwardEmail = {
+      recipient: emailRecipients.routing.onSuccess.recipient,
+      subject: `Invoice Ready for Approval: ${vendor}`,
+      body: `The attached invoice "${originalFilename}" has been fully validated and is ready for your approval.`
+    };
+
+  } else if (is_variable_rate) {
+    // --- Variable Rate Case ---
+    feedbackSubject = `⚠️ Invoice Processed for ${vendor}`;
+    feedbackBody = `The invoice "${originalFilename}" has a variable rate. It has been forwarded for manual review.`;
+    
+    forwardEmail = {
+      recipient: emailRecipients.routing.onVariable.recipient,
+      subject: `Invoice for Review (Variable Rate): ${vendor}`,
+      body: `The attached invoice "${originalFilename}" has a variable rate and requires your manual review.`
+    };
+  } else {
+    // --- Failure Case ---
+    feedbackSubject = `❌ Action Required: Invoice Failed Validation for ${vendor}`;
+    feedbackBody = `The invoice "${originalFilename}" failed validation and has NOT been forwarded for approval. Please review the details below and take appropriate action.`;
+    // No forwardEmail in this case.
+  }
+
+  // 1. Always send feedback to the source inbox
+  const sourceRecipient = emailRecipients.routing.source.recipient;
+  feedbackBody += `<br><br>--- Validation Details ---<br><pre>${JSON.stringify(validationResult, null, 2)}</pre>`;
+  await sendEmail(sourceRecipient, feedbackSubject, feedbackBody);
+
+  // 2. Conditionally forward to the approver/reviewer
+  if (forwardEmail) {
+    forwardEmail.body += `<br><br>--- Validation Details ---<br><pre>${JSON.stringify(validationResult, null, 2)}</pre>`;
+    await sendEmail(forwardEmail.recipient, forwardEmail.subject, forwardEmail.body);
+  }
+}
+
+/**
+ * Generic email sending utility.
+ * @param {string} recipient The email address of the recipient.
+ * @param {string} subject The subject of the email.
+ * @param {string} body The HTML body of the email.
+ */
+async function sendEmail(recipient, subject, body) {
+  const apiKey = process.env.AMPLIFY_API_KEY;
+  if (!recipient) {
+    console.error("No recipient defined. Skipping email.");
+    return;
+  }
+  
+  console.log(`Sending email to ${recipient} with subject "${subject}"`);
+  try {
+    await axios.post(`${AMPLIFY_API_URL}/send_email`, {
+      data: { to: [recipient], subject, body, importance: "normal" }
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      }
+    });
+    console.log(`- Email to ${recipient} sent successfully.`);
+  } catch (error) {
+    console.error(`- Failed to send email to ${recipient}:`, error.response?.data || error.message);
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -102,9 +186,13 @@ export default async function handler(req, res) {
             const validator = new PDFVendorMatcher();
             const validationResult = await validator.processPdf(pdfBuffer);
 
-            console.log(`     ... Validation complete for ${attachment.name}.`);
-            console.log(JSON.stringify(validationResult, null, 2));
-            // TODO: Do something with the result (e.g., save to DB, send notification)
+            // Only send an email if a vendor was successfully identified
+            if (validationResult && validationResult.vendor) {
+              console.log(`     ... Validation complete for ${attachment.name}.`);
+              await sendNotificationEmails(validationResult, attachment.name);
+            } else {
+              console.log(`     ... Validation skipped for ${attachment.name}: No known vendor identified.`);
+            }
           }
         }
       }

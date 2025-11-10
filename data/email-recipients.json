@@ -1,0 +1,20 @@
+{
+  "routing": {
+    "source": {
+      "description": "The inbox being scanned. Receives a receipt for every processed invoice.",
+      "recipient": "maret.e.rudin-aulenbach@vanderbilt.edu"
+    },
+    "onSuccess": {
+      "description": "Email for fully validated invoices, sent to the main contact for approval.",
+      "recipient": "maret.e.rudin-aulenbach+1@vanderbilt.edu"
+    },
+    "onFailure": {
+      "description": "Email for invoices with validation failures, sent to the admin for review.",
+      "recipient": "maret.e.rudin-aulenbach+2@vanderbilt.edu"
+    },
+    "onVariable": {
+      "description": "Email for invoices with variable rates that need manual review.",
+      "recipient": "maret.e.rudin-aulenbach+3@vanderbilt.edu"
+    }
+  }
+}
