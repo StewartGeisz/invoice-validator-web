@@ -3,5 +3,11 @@
     "pages/api/validate-pdf.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/scan-emails",
+      "schedule": "0 * * * *"
+    }
+  ]
 }
