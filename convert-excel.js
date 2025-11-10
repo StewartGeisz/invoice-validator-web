@@ -4,8 +4,9 @@ const fs = require('fs');
 console.log('Converting Excel to JSON...');
 try {
   const workbook = XLSX.readFile('Service Agreement Table (Rolling) (1).xlsx');
-  let sheetName = 'Service Agreements';
+  let sheetName = 'Service Agreements_Validation';
   if (!workbook.SheetNames.includes(sheetName)) {
+    console.log('Service Agreements_Validation sheet not found, available sheets:', workbook.SheetNames);
     sheetName = workbook.SheetNames[0];
   }
 
@@ -48,6 +49,9 @@ try {
         currentPo = row[headers.indexOf('FY24 PO')] || null;
       }
       
+      // Get rate type from column AP (41) and rate amount from column AQ (42)
+      const rateType = row[41] ? row[41].toString().trim() : null;
+
       vendorData[vendorName] = {
         contractStart: row[headers.indexOf('Contract Start Date')] || null,
         contractEnd: row[headers.indexOf('Contract End Date')] || null,
@@ -58,6 +62,7 @@ try {
         admin: row[headers.indexOf('Admin')] || null,
         director: row[headers.indexOf('Asst Director / Director')] || null,
         fum: row[headers.indexOf('FUM')] || null, // Column D - FUM
+        rateType: rateType, // Variable vs Fixed
         rateAmount: (rateAmount && typeof rateAmount === 'number') ? rateAmount : null
       };
     }

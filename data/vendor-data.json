@@ -97,7 +97,8 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 10
     },
     "Apex Mechanical Services": {
       "contractStart": null,
@@ -109,6 +110,7 @@
       "admin": "Telitha Collier",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "AssetWorks (Fuel Drive)": {
@@ -121,6 +123,7 @@
       "admin": "Kathy Carney",
       "director": "Stacey Crowhurst",
       "fum": "Heather Watkins",
+      "rateType": "Annual",
       "rateAmount": null
     },
     "AssetWorks (Systems)": {
@@ -133,7 +136,8 @@
       "admin": "Kathy Carney",
       "director": "Stacey Crowhurst",
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 247292.38
     },
     "Atlas Copco": {
       "contractStart": null,
@@ -145,7 +149,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 1527.3
     },
     "Autodesk Inc": {
       "contractStart": null,
@@ -157,7 +162,8 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 13665.5
     },
     "Automated Doors and Access": {
       "contractStart": 44117,
@@ -169,6 +175,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Barcodes": {
@@ -181,6 +188,7 @@
       "admin": "Telitha Collier",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Bionomics": {
@@ -193,6 +201,7 @@
       "admin": "Kathy Carney",
       "director": "Andrea George",
       "fum": "Christine Fogg",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "BioWaste Services LLC": {
@@ -205,6 +214,7 @@
       "admin": "Telitha Collier",
       "director": "Andrea George",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Border States": {
@@ -217,6 +227,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "BuildingLogiX (Waibel Energy) BACnet Monitoring Service Hours": {
@@ -229,6 +240,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "BuildingLogiX (Waibel Energy) FD&D": {
@@ -241,6 +253,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Monthly",
       "rateAmount": null
     },
     "Chemsearch (NCH Corporation)": {
@@ -253,7 +266,8 @@
       "admin": "Telitha Collier",
       "director": "Damon Varble",
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 400
     },
     "Cintas Corporation (Floormats)": {
       "contractStart": 42856,
@@ -265,6 +279,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Cintas Corporation (Launderables)": {
@@ -277,6 +292,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Cintas Corporation (Uniforms)": {
@@ -289,6 +305,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Clean Harbors (chemical waste)": {
@@ -301,6 +318,7 @@
       "admin": "Kathy Carney",
       "director": "Andrea George",
       "fum": "Christine Fogg",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Clean Harbors (universal waste)": {
@@ -313,6 +331,7 @@
       "admin": "Telitha Collier",
       "director": null,
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Comfort Group (Automated Controls)": {
@@ -325,6 +344,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Complete Comfort Control": {
@@ -337,7 +357,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 9820
     },
     "Compost Company": {
       "contractStart": 45352,
@@ -349,6 +370,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Critical Components Inc": {
@@ -361,7 +383,8 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 12034.47
     },
     "Crawford Electric Supply": {
       "contractStart": null,
@@ -373,6 +396,7 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Crawford Electric Supply (Stuart C Irby (Irby A Sonepar Company))": {
@@ -385,18 +409,20 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Cumberland Predictive Maintenance": {
       "contractStart": null,
       "contractEnd": null,
-      "currentPo": "P25030310",
+      "currentPo": "P26018261",
       "poStart": 45597,
       "poEnd": 45961,
       "mainContact": "Chris Preston",
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Cummins Inc": {
@@ -409,6 +435,7 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Daikin Applied": {
@@ -421,18 +448,20 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Quarterly",
+      "rateAmount": 7080.75
     },
     "Delta Landscapes": {
       "contractStart": null,
       "contractEnd": null,
-      "currentPo": "P25010541",
+      "currentPo": "P26020541",
       "poStart": 45931,
       "poEnd": 46295,
       "mainContact": "Laura Barker",
-      "admin": "Telitha Collier",
+      "admin": "Amy Corlew",
       "director": "Mary McQuillan",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Diamond Clean JVG (Llareli Gomora Villasenor)": {
@@ -445,6 +474,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Don Kennedy Roofing": {
@@ -454,9 +484,10 @@
       "poStart": 45474,
       "poEnd": 46568,
       "mainContact": "Chris Preston",
-      "admin": "Telitha Collier",
+      "admin": "Amy Corlew",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Dubois Chemicals (Nashville Chemical - Campus": {
@@ -469,7 +500,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 24136.620833333334
     },
     "Dubois Chemicals (Nashville Chemical - Powerhouse": {
       "contractStart": 44835,
@@ -481,7 +513,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 19869.595833333333
     },
     "Dubois Chemicals (replaced Evoqua) - Water Treatment": {
       "contractStart": null,
@@ -493,6 +526,7 @@
       "admin": "Telitha Collier",
       "director": "Mike Meadows",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "e-Builder": {
@@ -505,18 +539,20 @@
       "admin": "Telitha Collier",
       "director": "Ally Sullivan",
       "fum": "Aubrey Adams",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 382514.5
     },
     "Elitte Septic Tank and Grease Trap": {
       "contractStart": 43952,
       "contractEnd": 45413,
-      "currentPo": "P25011399",
+      "currentPo": "P26018085",
       "poStart": 45962,
       "poEnd": 46326,
       "mainContact": "Terry Haley",
       "admin": "Telitha Collier",
       "director": "Damon Varble",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "eLogger": {
@@ -529,7 +565,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 6293.3
     },
     "Empire Roofing": {
       "contractStart": 45474,
@@ -541,6 +578,7 @@
       "admin": "Telitha Collier",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Enerflex": {
@@ -553,6 +591,7 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Graywolf Sensing Solutions": {
@@ -565,7 +604,8 @@
       "admin": "Kathy Carney",
       "director": "Leigh Shoup",
       "fum": "Christine Fogg",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 3798
     },
     "Honeywell Automation": {
       "contractStart": null,
@@ -577,6 +617,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": null,
       "rateAmount": null
     },
     "Insight Public Sector (Blue Beam)": {
@@ -589,7 +630,8 @@
       "admin": "Telitha Collier",
       "director": "Stacey Crowhurst",
       "fum": "Christine Fogg",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 3263.98
     },
     "Interstate AC Service": {
       "contractStart": null,
@@ -601,6 +643,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "John Bouchard & Sons (Inspections)": {
@@ -610,9 +653,10 @@
       "poStart": 45839,
       "poEnd": 46203,
       "mainContact": "Mike McDonner",
-      "admin": "Kathy Carney",
+      "admin": "Amy Corlew",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "John Bouchard & Sons (repairs)": {
@@ -622,9 +666,10 @@
       "poStart": 45839,
       "poEnd": 46203,
       "mainContact": "Mike McDonner",
-      "admin": "Kathy Carney",
+      "admin": "Amy Corlew",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Johnson Controls (Chillers)": {
@@ -637,7 +682,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 66341
     },
     "Johnson Controls (Metasys)": {
       "contractStart": null,
@@ -649,7 +695,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Quarterly",
+      "rateAmount": 21841.75
     },
     "K&A Landscaping (Kelly Gregory)": {
       "contractStart": null,
@@ -661,6 +708,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Kings III of America": {
@@ -670,10 +718,11 @@
       "poStart": 45839,
       "poEnd": 46203,
       "mainContact": "Mike McDonner",
-      "admin": "Kathy Carney",
+      "admin": "Amy Corlew",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 10247
     },
     "Kings III of America - Repairs": {
       "contractStart": 45108,
@@ -682,9 +731,10 @@
       "poStart": 45474,
       "poEnd": 46203,
       "mainContact": "Mike McDonner",
-      "admin": "Kathy Carney",
+      "admin": "Amy Corlew",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "LoJac LLC (formerly SCA)": {
@@ -697,6 +747,7 @@
       "admin": "Telitha Collier",
       "director": "Damon Varble",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Lerch Bates Inc.": {
@@ -709,6 +760,7 @@
       "admin": "Telitha Collier",
       "director": "Mike Meadows",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Mechanical Resource Group (Chillers)": {
@@ -721,7 +773,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 2812
     },
     "Mid South Instrument Services Inc.": {
       "contractStart": 44562,
@@ -733,7 +786,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Weekly",
+      "rateAmount": 10924.2
     },
     "Nashville Door Closer Services": {
       "contractStart": null,
@@ -745,6 +799,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "On Site": {
@@ -757,7 +812,8 @@
       "admin": "Kathy Carney",
       "director": "Andrea George",
       "fum": "Christine Fogg",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 21540
     },
     "Otis Elevator (formerly Urban Elevator Services)": {
       "contractStart": 44593,
@@ -769,7 +825,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 56381
     },
     "Perk Products": {
       "contractStart": null,
@@ -781,6 +838,7 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Power Equipment Company of Memphis": {
@@ -793,6 +851,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Pye Barker (PB Parent Holdco LP) (Extinguishers + Kitchen suppression)": {
@@ -805,6 +864,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Revenue Source Group (RSG)": {
@@ -817,7 +877,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 5000
     },
     "Rise Vision Inc.": {
       "contractStart": null,
@@ -829,7 +890,8 @@
       "admin": "Kathy Carney",
       "director": "Scott Eller",
       "fum": "Aubrey Adams",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 9936
     },
     "Rollins Pest Solutions": {
       "contractStart": 44168,
@@ -841,6 +903,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Russell's Glass": {
@@ -853,6 +916,7 @@
       "admin": "Telitha Collier",
       "director": "Mike Meadows",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Seth David Frost dba Frost Enviro Services": {
@@ -865,6 +929,7 @@
       "admin": "Telitha Collier",
       "director": "Mike Meadows",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Solar Turbines Inc.": {
@@ -877,7 +942,8 @@
       "admin": "Kathy Carney",
       "director": "John Williams",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 131559.54
     },
     "Sound Communications": {
       "contractStart": null,
@@ -889,7 +955,8 @@
       "admin": "Kathy Carney",
       "director": "Stacey Crowhurst",
       "fum": "Heather Watkins",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 2380.32
     },
     "Stericycle": {
       "contractStart": null,
@@ -901,6 +968,7 @@
       "admin": "Kathy Carney",
       "director": "Andrea George",
       "fum": "Christine Fogg",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "STI Holdings (Smith Turf & Irrigation)- WeatherTrak": {
@@ -913,6 +981,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Sun Coast Resources LLC (Formerly Reladyne)": {
@@ -925,6 +994,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "The Budd Group": {
@@ -937,7 +1007,8 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
-      "rateAmount": null
+      "rateType": "Monthly",
+      "rateAmount": 203203.68
     },
     "Trane": {
       "contractStart": null,
@@ -949,7 +1020,8 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
-      "rateAmount": null
+      "rateType": "Annual",
+      "rateAmount": 51542
     },
     "Tropical Design": {
       "contractStart": null,
@@ -961,6 +1033,7 @@
       "admin": "Telitha Collier",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Monthly",
       "rateAmount": null
     },
     "Turf Tank (Intelligent Marking USA)": {
@@ -973,6 +1046,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Heather Watkins",
+      "rateType": "Annual",
       "rateAmount": null
     },
     "Underground Locators of Nashville (Underguard)": {
@@ -985,6 +1059,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Verizon Wireless": {
@@ -997,6 +1072,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Vision Southeast Company (Vision Security Technologies)": {
@@ -1009,6 +1085,7 @@
       "admin": "Telitha Collier",
       "director": "Stacey Crowhurst",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Vortex Air Duct Cleaning": {
@@ -1021,6 +1098,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Warren Insulation": {
@@ -1033,6 +1111,7 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Waste Management of TN (Trash)": {
@@ -1045,6 +1124,7 @@
       "admin": "Telitha Collier",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "West End Lock": {
@@ -1057,6 +1137,7 @@
       "admin": "Kathy Carney",
       "director": "Mary McQuillan",
       "fum": "Aubrey Adams",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Western Electrical Services (CBS Field Services)": {
@@ -1069,6 +1150,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Olivia Daugherty",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "WW Grainger": {
@@ -1081,6 +1163,7 @@
       "admin": "Kathy Carney",
       "director": null,
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "WW Williams": {
@@ -1093,6 +1176,7 @@
       "admin": "Telitha Collier",
       "director": "Mike Meadows / Damon Varble",
       "fum": "Heather Watkins",
+      "rateType": "Variable",
       "rateAmount": null
     },
     "Won-Door Corporation": {
@@ -1105,8 +1189,9 @@
       "admin": "Kathy Carney",
       "director": "Damon Varble",
       "fum": "Olivia Daugherty",
+      "rateType": "Annual",
       "rateAmount": null
     }
   },
-  "lastUpdated": "2025-11-05T21:54:38.825Z"
+  "lastUpdated": "2025-11-05T22:10:38.375Z"
 }
