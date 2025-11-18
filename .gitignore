@@ -35,3 +35,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Audit logs (contains PDFs and sensitive validation data)
+audit_log/

@@ -6,6 +6,13 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
+  
+  // Excel upload state
+  const [excelFile, setExcelFile] = useState(null);
+  const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [excelError, setExcelError] = useState(null);
+  const [excelSuccess, setExcelSuccess] = useState(null);
+  const [showExcelUpload, setShowExcelUpload] = useState(false);
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -75,6 +82,72 @@ export default function Home() {
     return 'text-yellow-600';
   };
 
+  const handleExcelChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const validExtensions = ['.xlsx', '.xls'];
+      const fileExtension = selectedFile.name.toLowerCase().substring(selectedFile.name.lastIndexOf('.'));
+      
+      if (!validExtensions.includes(fileExtension)) {
+        setExcelError('Please select an Excel file (.xlsx or .xls)');
+        setExcelFile(null);
+        return;
+      }
+      
+      setExcelFile(selectedFile);
+      setExcelError(null);
+      setExcelSuccess(null);
+    }
+  };
+
+  const handleExcelSubmit = async (e) => {
+    e.preventDefault();
+    if (!excelFile) {
+      setExcelError('Please select an Excel file');
+      return;
+    }
+
+    setUploadingExcel(true);
+    setExcelError(null);
+    setExcelSuccess(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('excel', excelFile);
+
+      const response = await fetch('/api/update-vendor-data', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setExcelSuccess({
+          message: data.message,
+          vendorCount: data.vendorCount,
+          lastUpdated: data.lastUpdated,
+          filename: data.filename
+        });
+        setExcelFile(null);
+        // Reset file input
+        e.target.reset();
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          setShowExcelUpload(false);
+          setExcelSuccess(null);
+        }, 5000);
+      } else {
+        setExcelError(data.error || 'Failed to update vendor data');
+      }
+    } catch (err) {
+      setExcelError('Upload failed. Please try again.');
+      console.error('Excel upload error:', err);
+    } finally {
+      setUploadingExcel(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
@@ -83,7 +156,92 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 relative">
+        {/* Excel Upload Card - Top Right Corner */}
+        <div className="fixed top-4 right-4 z-50 max-w-sm">
+          {!showExcelUpload ? (
+            <button
+              onClick={() => setShowExcelUpload(true)}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg shadow-md text-sm font-medium transition-colors flex items-center gap-2"
+              title="Update vendor database from Excel"
+            >
+              <span>📊</span>
+              <span>Update Vendor Data</span>
+            </button>
+          ) : (
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-sm font-semibold text-gray-900">Update Vendor Database</h3>
+                <button
+                  onClick={() => {
+                    setShowExcelUpload(false);
+                    setExcelFile(null);
+                    setExcelError(null);
+                    setExcelSuccess(null);
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <p className="text-xs text-gray-600 mb-3">
+                Upload monthly Excel file to update vendor information. The file will replace the current vendor database.
+              </p>
+              
+              {excelSuccess ? (
+                <div className="bg-green-50 border border-green-200 rounded p-3 mb-3">
+                  <p className="text-green-800 text-sm font-medium mb-1">✅ {excelSuccess.message}</p>
+                  <p className="text-green-700 text-xs">
+                    Updated {excelSuccess.vendorCount} vendors
+                    {excelSuccess.lastUpdated && (
+                      <span className="block mt-1">
+                        Last updated: {new Date(excelSuccess.lastUpdated).toLocaleString()}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleExcelSubmit} className="space-y-3">
+                  <div>
+                    <label htmlFor="excel" className="block text-xs font-medium text-gray-700 mb-1">
+                      Select Excel File (.xlsx or .xls)
+                    </label>
+                    <input
+                      type="file"
+                      id="excel"
+                      accept=".xlsx,.xls"
+                      onChange={handleExcelChange}
+                      className="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                  </div>
+                  
+                  {excelFile && (
+                    <div className="text-xs text-gray-600">
+                      Selected: {excelFile.name}
+                    </div>
+                  )}
+                  
+                  {excelError && (
+                    <div className="text-red-600 text-xs bg-red-50 border border-red-200 rounded p-2">
+                      {excelError}
+                    </div>
+                  )}
+                  
+                  <button
+                    type="submit"
+                    disabled={!excelFile || uploadingExcel}
+                    className="w-full bg-green-600 text-white py-2 px-3 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+                  >
+                    {uploadingExcel ? 'Processing...' : 'Update Database'}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             PDF Invoice Validator

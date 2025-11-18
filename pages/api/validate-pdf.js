@@ -1,5 +1,6 @@
 import formidable from 'formidable';
 import PDFValidator from '../../lib/pdf-validator';
+import auditLogger from '../../lib/audit-logger';
 
 export const config = {
     api: {
@@ -41,23 +42,58 @@ export default async function handler(req, res) {
         const results = [];
 
         for (const pdfFile of pdfFiles) {
+            let pdfBuffer = null;
             try {
                 // Read the PDF file into a buffer
-                const pdfBuffer = fs.readFileSync(pdfFile.filepath);
+                pdfBuffer = fs.readFileSync(pdfFile.filepath);
 
                 // Process the PDF
                 const result = await validator.processPdf(pdfBuffer, pdfFile.originalFilename);
                 results.push(result);
 
+                // Log to audit trail (non-blocking - don't fail validation if logging fails)
+                try {
+                    await auditLogger.logValidation(
+                        result,
+                        pdfBuffer,
+                        pdfFile.originalFilename,
+                        {
+                            ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+                            userAgent: req.headers['user-agent'],
+                        }
+                    );
+                } catch (logError) {
+                    console.error('Failed to log validation to audit trail:', logError);
+                    // Continue - logging failure shouldn't break validation
+                }
+
                 // Clean up temporary file
                 fs.unlinkSync(pdfFile.filepath);
             } catch (fileError) {
                 console.error(`Error processing ${pdfFile.originalFilename}:`, fileError);
-                results.push({
+                const errorResult = {
                     filename: pdfFile.originalFilename,
                     error: fileError.message || 'Processing failed',
                     vendor: null
-                });
+                };
+                results.push(errorResult);
+
+                // Log error to audit trail if we have the buffer
+                if (pdfBuffer) {
+                    try {
+                        await auditLogger.logValidation(
+                            errorResult,
+                            pdfBuffer,
+                            pdfFile.originalFilename,
+                            {
+                                ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+                                userAgent: req.headers['user-agent'],
+                            }
+                        );
+                    } catch (logError) {
+                        console.error('Failed to log error to audit trail:', logError);
+                    }
+                }
                 
                 // Still clean up the file
                 try {
