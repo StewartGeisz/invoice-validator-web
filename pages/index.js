@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 export default function Home() {
@@ -50,7 +50,10 @@ export default function Home() {
         formData.append('pdf', file);
       });
 
-      const response = await fetch('/api/validate-pdf', {
+      // Use regular endpoint with increased limits for all uploads
+      const apiEndpoint = '/api/validate-pdf';
+      
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         body: formData,
       });
@@ -58,17 +61,20 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
+        // Both modes now return results immediately
         setResults(data.results || []);
+        setUploading(false);
       } else {
         setError(data.error || 'Validation failed');
+        setUploading(false);
       }
     } catch (err) {
       setError('Upload failed. Please try again.');
       console.error('Upload error:', err);
-    } finally {
       setUploading(false);
     }
   };
+
 
   const getStatusIcon = (valid) => {
     if (valid === true) return '✅';
@@ -266,8 +272,16 @@ export default function Home() {
               </div>
               
               {files.length > 0 && (
-                <div className="text-sm text-gray-600">
-                  Selected {files.length} file(s): {files.map(f => f.name).join(', ')}
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-600">
+                    Selected {files.length} file(s): {files.map(f => f.name).join(', ')}
+                  </div>
+                  
+                  {files.length >= 6 && (
+                    <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                      🚀 Large upload detected - processing may take longer
+                    </div>
+                  )}
                 </div>
               )}
               
@@ -280,10 +294,14 @@ export default function Home() {
                 disabled={files.length === 0 || uploading}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {uploading ? `Validating ${files.length} file(s)...` : `Validate ${files.length || ''} Invoice${files.length !== 1 ? 's' : ''}`}
+                {uploading 
+                  ? `Processing ${files.length} file(s)...`
+                  : `Validate ${files.length || ''} Invoice${files.length !== 1 ? 's' : ''}`
+                }
               </button>
             </form>
           </div>
+
 
           {results.length > 0 && (
             <div className="space-y-6">
