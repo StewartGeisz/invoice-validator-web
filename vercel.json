@@ -2,12 +2,15 @@
   "functions": {
     "pages/api/validate-pdf.js": {
       "maxDuration": 30
+    },
+    "pages/api/scan-emails.js": {
+      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/scan-emails",
-      "schedule": "0 * * * *"
+      "schedule": "* * * * *"
     }
   ]
 }

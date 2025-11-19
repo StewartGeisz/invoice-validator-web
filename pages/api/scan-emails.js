@@ -1,213 +1,121 @@
 // pages/api/scan-emails.js
-import axios from 'axios';
-import PDFVendorMatcher from '../../lib/pdf-validator.js';
-import emailRecipients from '../../data/email-recipients.json';
-
-const AMPLIFY_API_URL = 'https://prod-api.vanderbilt.ai/microsoft/integrations';
+import EmailProcessor from '../../lib/email-processor.js';
 
 /**
- * Searches for recent emails that have attachments.
- * @returns {Promise<Array>} A list of email messages.
+ * Email Scanning API Endpoint
+ * Triggered by Vercel Cron job to process unread emails
+ * 
+ * For local testing: POST to http://localhost:3000/api/scan-emails
  */
-async function searchEmailsWithAttachments() {
-  const apiKey = process.env.AMPLIFY_API_KEY;
-  if (!apiKey) {
-    throw new Error("AMPLIFY_API_KEY environment variable not set.");
+export default async function handler(req, res) {
+  // Allow both POST (Vercel Cron) and GET (for local testing)
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method Not Allowed. Use POST or GET for testing.' });
   }
 
-  const response = await axios.post(`${AMPLIFY_API_URL}/search_messages`, {
-    data: {
-      search_query: "hasAttachments:true",
-      top: 10 // Process up to 10 emails per run to avoid timeouts
-    }
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    }
-  });
+  const startTime = Date.now();
+  const timestamp = new Date().toISOString();
 
-  return response.data.data || [];
-}
-
-/**
- * Gets the list of attachments for a given message.
- * @param {string} messageId The ID of the email message.
- * @returns {Promise<Array>} A list of attachment metadata objects.
- */
-async function getAttachmentsList(messageId) {
-  const apiKey = process.env.AMPLIFY_API_KEY;
-  const response = await axios.post(`${AMPLIFY_API_URL}/get_attachments`, {
-    data: { message_id: messageId }
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    }
-  });
-  return response.data.data || [];
-}
-
-/**
- * Downloads a specific attachment and returns its content as a Buffer.
- * @param {string} messageId The ID of the email message.
- * @param {string} attachmentId The ID of the attachment.
- * @returns {Promise<Buffer|null>} The file content as a Buffer.
- */
-async function downloadAttachment(messageId, attachmentId) {
-  const apiKey = process.env.AMPLIFY_API_KEY;
-  const response = await axios.post(`${AMPLIFY_API_URL}/download_attachment`, {
-    data: {
-      message_id: messageId,
-      attachment_id: attachmentId
-    }
-  }, {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    }
-  });
-
-  const contentBytes = response.data.data?.contentBytes;
-  if (contentBytes) {
-    return Buffer.from(contentBytes, 'base64');
-  }
-  return null;
-}
-
-/**
- * Sends a validation result email based on the outcome.
- * This function now handles routing for both the source and the approvers.
- * @param {object} validationResult The result from the PDF validator.
- * @param {string} originalFilename The name of the PDF file.
- */
-async function sendNotificationEmails(validationResult, originalFilename) {
-  const { vendor, po_valid, date_valid, rate_valid, is_variable_rate } = validationResult;
-  const overallSuccess = vendor && po_valid && date_valid && rate_valid && !is_variable_rate;
-
-  let feedbackSubject;
-  let feedbackBody;
-  let forwardEmail = null;
-
-  if (overallSuccess) {
-    // --- Success Case ---
-    feedbackSubject = `✅ Invoice Processed for ${vendor}`;
-    feedbackBody = `The invoice "${originalFilename}" was successfully validated and has been forwarded for approval.`;
+  console.log('\n' + '='.repeat(60));
+  console.log('📧 EMAIL SCANNING PROCESS STARTED');
+  console.log('='.repeat(60));
+  console.log(`Timestamp: ${timestamp}`);
+  console.log(`Method: ${req.method}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Check environment variables
+  const hasEmailConfig = !!(process.env.OUTLOOK_EMAIL && process.env.OUTLOOK_PASSWORD);
+  console.log(`Email Config: ${hasEmailConfig ? '✅ Configured' : '❌ Missing (check .env.local)'}`);
+  
+  if (hasEmailConfig) {
+    console.log(`Email: ${process.env.OUTLOOK_EMAIL}`);
+    const pwd = process.env.OUTLOOK_PASSWORD || '';
+    console.log(`Password length: ${pwd.length}`);
+    console.log(`Password preview: ${pwd.substring(0, 4)}...${pwd.substring(pwd.length - 4)}`);
+    console.log(`Password has spaces: ${pwd.includes(' ')}`);
+    console.log(`Password has newlines: ${pwd.includes('\n') || pwd.includes('\r')}`);
+    console.log(`Password starts/ends with quotes: ${pwd.startsWith('"') || pwd.startsWith("'") || pwd.endsWith('"') || pwd.endsWith("'")}`);
     
-    forwardEmail = {
-      recipient: emailRecipients.routing.onSuccess.recipient,
-      subject: `Invoice Ready for Approval: ${vendor}`,
-      body: `The attached invoice "${originalFilename}" has been fully validated and is ready for your approval.`
-    };
-
-  } else if (is_variable_rate) {
-    // --- Variable Rate Case ---
-    feedbackSubject = `⚠️ Invoice Processed for ${vendor}`;
-    feedbackBody = `The invoice "${originalFilename}" has a variable rate. It has been forwarded for manual review.`;
+    // Check if it looks like an App Password
+    // Gmail App Passwords are 16 characters (no hyphens)
+    // Outlook App Passwords are 16 characters (may have hyphens)
+    const emailDomain = process.env.OUTLOOK_EMAIL?.split('@')[1] || '';
+    const isGmail = emailDomain.includes('gmail.com');
     
-    forwardEmail = {
-      recipient: emailRecipients.routing.onVariable.recipient,
-      subject: `Invoice for Review (Variable Rate): ${vendor}`,
-      body: `The attached invoice "${originalFilename}" has a variable rate and requires your manual review.`
-    };
-  } else {
-    // --- Failure Case ---
-    feedbackSubject = `❌ Action Required: Invoice Failed Validation for ${vendor}`;
-    feedbackBody = `The invoice "${originalFilename}" failed validation and has NOT been forwarded for approval. Please review the details below and take appropriate action.`;
-    // No forwardEmail in this case.
-  }
-
-  // 1. Always send feedback to the source inbox
-  const sourceRecipient = emailRecipients.routing.source.recipient;
-  feedbackBody += `<br><br>--- Validation Details ---<br><pre>${JSON.stringify(validationResult, null, 2)}</pre>`;
-  await sendEmail(sourceRecipient, feedbackSubject, feedbackBody);
-
-  // 2. Conditionally forward to the approver/reviewer
-  if (forwardEmail) {
-    forwardEmail.body += `<br><br>--- Validation Details ---<br><pre>${JSON.stringify(validationResult, null, 2)}</pre>`;
-    await sendEmail(forwardEmail.recipient, forwardEmail.subject, forwardEmail.body);
-  }
-}
-
-/**
- * Generic email sending utility.
- * @param {string} recipient The email address of the recipient.
- * @param {string} subject The subject of the email.
- * @param {string} body The HTML body of the email.
- */
-async function sendEmail(recipient, subject, body) {
-  const apiKey = process.env.AMPLIFY_API_KEY;
-  if (!recipient) {
-    console.error("No recipient defined. Skipping email.");
-    return;
+    if (isGmail) {
+      // Gmail App Passwords are exactly 16 characters, no hyphens
+      if (pwd.length !== 16) {
+        console.warn(`⚠️  Warning: Gmail App Passwords are exactly 16 characters. Your password is ${pwd.length} chars.`);
+        console.warn(`   Make sure you're using the App Password from https://myaccount.google.com/apppasswords`);
+        console.warn(`   NOT your regular Gmail password.`);
+      }
+    } else {
+      // Outlook App Passwords are 16 chars (with or without hyphens)
+      if (pwd.length !== 16 && pwd.replace(/-/g, '').length !== 16) {
+        console.warn(`⚠️  Warning: Outlook App Passwords are usually 16 characters. Your password is ${pwd.length} chars.`);
+        console.warn(`   Make sure you're using the App Password, not your regular password.`);
+      }
+    }
   }
   
-  console.log(`Sending email to ${recipient} with subject "${subject}"`);
-  try {
-    await axios.post(`${AMPLIFY_API_URL}/send_email`, {
-      data: { to: [recipient], subject, body, importance: "normal" }
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      }
+  if (!hasEmailConfig) {
+    console.error('❌ Missing email configuration!');
+    console.error('Required: OUTLOOK_EMAIL, OUTLOOK_PASSWORD');
+    console.error('\n⚠️  IMPORTANT: Gmail/Outlook require an "App Password" for IMAP/SMTP');
+    console.error('   See EMAIL_SETUP.md for instructions');
+    return res.status(500).json({
+      success: false,
+      error: 'Email configuration missing. Check environment variables.',
+      required: ['OUTLOOK_EMAIL', 'OUTLOOK_PASSWORD'],
+      note: 'Outlook.com requires App Passwords for IMAP/SMTP. See OUTLOOK_SETUP.md'
     });
-    console.log(`- Email to ${recipient} sent successfully.`);
-  } catch (error) {
-    console.error(`- Failed to send email to ${recipient}:`, error.response?.data || error.message);
   }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  // TODO: Add security check to ensure this is triggered by Vercel Cron or a trusted source
 
   try {
-    console.log("Email scanning process started...");
+    console.log('\n🔍 Initializing email processor...');
+    const processor = new EmailProcessor();
     
-    const messages = await searchEmailsWithAttachments();
-    console.log(`Found ${messages.length} emails with attachments.`);
+    console.log('📬 Fetching unread emails from inbox...');
+    const result = await processor.processUnreadEmails();
 
-    for (const message of messages) {
-      const attachments = await getAttachmentsList(message.id);
-      console.log(`- Email "${message.subject}" has ${attachments.length} attachment(s).`);
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-      for (const attachment of attachments) {
-        if (attachment.contentType === 'application/pdf' || attachment.name.toLowerCase().endsWith('.pdf')) {
-          console.log(`  -- Found PDF: ${attachment.name}. Downloading...`);
-          const pdfBuffer = await downloadAttachment(message.id, attachment.id);
+    console.log('\n' + '='.repeat(60));
+    console.log('✅ EMAIL SCANNING PROCESS COMPLETED');
+    console.log('='.repeat(60));
+    console.log(`Processed: ${result.processed} email(s)`);
+    console.log(`Total found: ${result.total} email(s)`);
+    console.log(`Duration: ${duration}s`);
+    console.log('='.repeat(60) + '\n');
 
-          if (pdfBuffer) {
-            console.log(`     ... Downloaded ${attachment.name} (${pdfBuffer.length} bytes). Validating...`);
-            // TODO: Pass pdfBuffer to the validator
-            const validator = new PDFVendorMatcher();
-            const validationResult = await validator.processPdf(pdfBuffer);
-
-            // Only send an email if a vendor was successfully identified
-            if (validationResult && validationResult.vendor) {
-              console.log(`     ... Validation complete for ${attachment.name}.`);
-              await sendNotificationEmails(validationResult, attachment.name);
-            } else {
-              console.log(`     ... Validation skipped for ${attachment.name}: No known vendor identified.`);
-            }
-          }
-        }
-      }
-    }
-
-    // The core logic will go here.
-    // 1. Search for emails with PDF attachments. (Done)
-    // 2. Download attachments. (Done)
-    // 3. Pass attachments to the validator. (Done)
-    // 4. Handle the results.
-
-    console.log("Email scanning process finished.");
-    res.status(200).json({ success: true, message: "Email scan completed." });
+    res.status(200).json({
+      success: true,
+      message: "Email scan completed.",
+      processed: result.processed,
+      total: result.total,
+      duration: `${duration}s`,
+      timestamp: timestamp
+    });
   } catch (error) {
-    console.error('Error during email scan:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    
+    console.error('\n' + '='.repeat(60));
+    console.error('❌ EMAIL SCANNING PROCESS FAILED');
+    console.error('='.repeat(60));
+    console.error(`Error: ${error.message}`);
+    console.error(`Duration: ${duration}s`);
+    if (error.stack) {
+      console.error('\nStack trace:');
+      console.error(error.stack);
+    }
+    console.error('='.repeat(60) + '\n');
+
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Internal Server Error',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      duration: `${duration}s`,
+      timestamp: timestamp
+    });
   }
 }
