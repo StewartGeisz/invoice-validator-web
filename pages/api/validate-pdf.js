@@ -5,6 +5,7 @@ import auditLogger from '../../lib/audit-logger';
 export const config = {
     api: {
         bodyParser: false,
+        responseLimit: false,
     },
 };
 
@@ -14,44 +15,51 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Parse the multipart form data
         const form = formidable({
-            maxFileSize: 10 * 1024 * 1024, // 10MB limit
+            maxFileSize: Infinity,
+            maxTotalFileSize: Infinity,
             keepExtensions: true,
         });
 
         const [fields, files] = await form.parse(req);
         
-        // Get the uploaded PDF files (support multiple files)
-        const pdfFiles = files.pdf ? (Array.isArray(files.pdf) ? files.pdf : [files.pdf]) : [];
+        const pdfFiles = files.pdf
+            ? (Array.isArray(files.pdf) ? files.pdf : [files.pdf])
+            : [];
         
         if (pdfFiles.length === 0) {
             return res.status(400).json({ error: 'No PDF files provided' });
         }
 
-        // Validate all files are PDFs
         for (const file of pdfFiles) {
             if (file.mimetype !== 'application/pdf') {
                 return res.status(400).json({ error: `File ${file.originalFilename} must be a PDF` });
             }
         }
 
-        // Process all PDF files
         const fs = require('fs');
         const validator = new PDFValidator();
         const results = [];
 
-        for (const pdfFile of pdfFiles) {
+        console.log(`Processing ${pdfFiles.length} files sequentially...`);
+
+        for (let i = 0; i < pdfFiles.length; i++) {
+            const pdfFile = pdfFiles[i];
             let pdfBuffer = null;
+
+            console.log(`Processing file ${i + 1}/${pdfFiles.length}: ${pdfFile.originalFilename}`);
+
             try {
-                // Read the PDF file into a buffer
+                // Read file
                 pdfBuffer = fs.readFileSync(pdfFile.filepath);
 
-                // Process the PDF
+                // Validate
                 const result = await validator.processPdf(pdfBuffer, pdfFile.originalFilename);
                 results.push(result);
 
-                // Log to audit trail (non-blocking - don't fail validation if logging fails)
+                console.log(`✅ Completed file ${i + 1}/${pdfFiles.length}: ${pdfFile.originalFilename}`);
+
+                // Audit log (non-blocking)
                 try {
                     await auditLogger.logValidation(
                         result,
@@ -64,21 +72,28 @@ export default async function handler(req, res) {
                     );
                 } catch (logError) {
                     console.error('Failed to log validation to audit trail:', logError);
-                    // Continue - logging failure shouldn't break validation
                 }
 
-                // Clean up temporary file
+                // Cleanup
                 fs.unlinkSync(pdfFile.filepath);
+
+                // Delay before next file
+                if (i < pdfFiles.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
             } catch (fileError) {
-                console.error(`Error processing ${pdfFile.originalFilename}:`, fileError);
+                console.error(`❌ Error processing ${pdfFile.originalFilename}:`, fileError);
+
                 const errorResult = {
                     filename: pdfFile.originalFilename,
                     error: fileError.message || 'Processing failed',
                     vendor: null
                 };
+
                 results.push(errorResult);
 
-                // Log error to audit trail if we have the buffer
+                // Log error if we have the data
                 if (pdfBuffer) {
                     try {
                         await auditLogger.logValidation(
@@ -94,8 +109,7 @@ export default async function handler(req, res) {
                         console.error('Failed to log error to audit trail:', logError);
                     }
                 }
-                
-                // Still clean up the file
+
                 try {
                     fs.unlinkSync(pdfFile.filepath);
                 } catch (cleanupError) {
@@ -104,15 +118,15 @@ export default async function handler(req, res) {
             }
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            results: results,
-            count: results.length
+            results,
+            count: results.length,
         });
 
     } catch (error) {
         console.error('PDF validation error:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             error: error.message || 'Internal server error'
         });
