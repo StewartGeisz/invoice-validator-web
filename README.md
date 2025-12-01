@@ -93,17 +93,23 @@ A Vercel-compatible web application that validates PDF invoices against a vendor
    - Import your Git repository
    - Click "Deploy"
 
-### Step 3: Configure Environment Variables (Optional)
+### Step 3: Configure Environment Variables
 
-If you want to use the Amplify API for advanced vendor matching:
+1. **Required Email Configuration**:
+   - `OUTLOOK_EMAIL`: Email address for IMAP/SMTP
+   - `OUTLOOK_PASSWORD`: App Password (not regular password)
+   - `ENVIRONMENT`: Set to `dev` or `production`
+     - `dev`: All emails sent to maret.e.rudin-aulenbach@vanderbilt.edu (for testing)
+     - `production`: Uses actual vendor contact emails and email sender
 
-1. **In Vercel Dashboard**:
+2. **Optional Amplify API** (for advanced vendor matching):
+   - `AMPLIFY_API_URL`: Your Amplify API endpoint
+   - `AMPLIFY_API_KEY`: Your API key
+
+3. **In Vercel Dashboard**:
    - Go to Project Settings → Environment Variables
-   - Add:
-     - `AMPLIFY_API_URL`: Your Amplify API endpoint
-     - `AMPLIFY_API_KEY`: Your API key
-
-2. **Redeploy** after adding environment variables
+   - Add all required variables
+   - **Redeploy** after adding environment variables
 
 ### Step 4: Verify Deployment
 
@@ -120,17 +126,27 @@ If you want to use the Amplify API for advanced vendor matching:
    npm install
    ```
 
-2. **Convert Excel data** (if not done):
+2. **Create `.env.local` file** (copy from `.env.local.example`):
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   
+   Then edit `.env.local` and set:
+   - `OUTLOOK_EMAIL`: Your email address
+   - `OUTLOOK_PASSWORD`: Your app password
+   - `ENVIRONMENT=dev`: For testing (all emails go to maret.e.rudin-aulenbach@vanderbilt.edu)
+
+3. **Convert Excel data** (if not done):
    ```bash
    node convert-excel.js
    ```
 
-3. **Start development server**:
+4. **Start development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open browser** to [http://localhost:3000](http://localhost:3000)
+5. **Open browser** to [http://localhost:3000](http://localhost:3000)
 
 ### Testing
 

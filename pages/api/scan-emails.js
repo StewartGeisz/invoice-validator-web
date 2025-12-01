@@ -4,10 +4,10 @@ import EmailProcessor from '../../lib/email-processor.js';
 /**
  * Email Scanning API Endpoint
  * Triggered by Vercel Cron job to process unread emails
- * 
- * For local testing: POST to http://localhost:3000/api/scan-emails
+ *
+ * For local testing: GET/POST http://localhost:3000/api/scan-emails
  */
-export default async function handler(req, res) {
+async function scanEmailsHandler(req, res) {
   // Allow both POST (Vercel Cron) and GET (for local testing)
   if (req.method !== 'POST' && req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed. Use POST or GET for testing.' });
@@ -16,12 +16,24 @@ export default async function handler(req, res) {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
 
+  // Log environment configuration
+  const environment = process.env.ENVIRONMENT || process.env.NODE_ENV || 'development';
+  const envLower = environment.toLowerCase();
+  const isDev = envLower === 'dev' || envLower === 'development';
+  const envMode = isDev ? 'DEV' : 'PRODUCTION';
+  
   console.log('\n' + '='.repeat(60));
   console.log('📧 EMAIL SCANNING PROCESS STARTED');
   console.log('='.repeat(60));
   console.log(`Timestamp: ${timestamp}`);
   console.log(`Method: ${req.method}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Environment Variable: ${environment}`);
+  console.log(`Mode: ${envMode}`);
+  if (isDev) {
+    console.log(`⚠️  DEV MODE: All emails redirected to maret.e.rudin-aulenbach@vanderbilt.edu`);
+  } else {
+    console.log(`✅ PRODUCTION MODE: Using actual vendor contact emails`);
+  }
   
   // Check environment variables
   const hasEmailConfig = !!(process.env.OUTLOOK_EMAIL && process.env.OUTLOOK_PASSWORD);
@@ -119,3 +131,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+export default scanEmailsHandler;
