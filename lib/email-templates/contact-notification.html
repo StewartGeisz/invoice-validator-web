@@ -106,11 +106,26 @@
         <p>The validated invoice PDF is attached to this email.</p>
         {{/if}}
         
+        {{#if isFailure}}
+        <div class="approval-instructions" style="background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; border-radius: 3px;">
+            <h3 style="margin-top: 0;">Action Required</h3>
+            <p><strong>Please reply to this email with one of the following:</strong></p>
+            <ul>
+                <li><strong>"Approve"</strong> or <strong>"Approved"</strong> - to approve this invoice and forward to Main Contact</li>
+                <li><strong>"Reject"</strong> or <strong>"Rejected"</strong> - to reject this invoice</li>
+            </ul>
+            <p style="font-size: 12px; color: #666; margin-bottom: 0;">Your reply will be automatically processed.</p>
+        </div>
+        {{/if}}
+        
         <p>Please review the invoice and take appropriate action.</p>
         
         <div class="footer">
             <p>This is an automated message from the Invoice Validation System.</p>
             <p>If you have any questions, please contact the administrative assistant.</p>
+            {{#if isFailure}}
+            <p style="font-size: 11px; color: #999;">Reference: [Ref: {{referenceId}}]</p>
+            {{/if}}
         </div>
     </div>
 </body>
