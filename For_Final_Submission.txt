@@ -1,0 +1,7 @@
+email: invoice.validator.dev@gmail.com
+password: gha5GFR3xub1mzt@rxa
+
+set ENVIRONMENT=production in the .env.local. =dev for development mode.
+
+Automated email scanning is currently enabled via a Vercel cronjob. Manual email scanning is done by going to /api/scan-emails. A lazy method of recreating automated email scanning could be using a cron job to ping that url once every minute or whatever frequency is desired.
+
