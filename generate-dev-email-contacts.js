@@ -2,9 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
+// ============================================================================
+// CONFIGURATION - Easy way to change the dev email pattern
+// ============================================================================
+// Change these values to use a different email pattern for dev mode
+const DEV_NAME_PREFIX = 'Maret Rudin-Aulenbach';  // Name prefix: "Maret Rudin-Aulenbach 1", "Maret Rudin-Aulenbach 2", etc.
+const DEV_EMAIL_BASE = 'maret.e.rudin-aulenbach'; // Email base: "maret.e.rudin-aulenbach+1@vanderbilt.edu"
+const DEV_EMAIL_DOMAIN = '@vanderbilt.edu';       // Email domain
+// ============================================================================
+
 /**
- * Generate dev-email-contacts.json with "Maret Rudin-Aulenbach {N}" names
- * mapping to maret.e.rudin-aulenbach+{N}@vanderbilt.edu
+ * Generate dev-email-contacts.json with configurable dev names and emails
  * Structure: { "Maret Rudin-Aulenbach 1": "maret.e.rudin-aulenbach+1@vanderbilt.edu", ... }
  * Also creates a mapping file to map real names to dev names
  */
@@ -17,7 +25,7 @@ function generateDevEmailContacts() {
         contacts: {},
         lastUpdated: new Date().toISOString(),
         sourceFile: 'dev-email-contacts.json (generated from email-contacts.json)',
-        note: 'DEV MODE: Names are "Maret Rudin-Aulenbach {N}" mapping to maret.e.rudin-aulenbach+{N}@vanderbilt.edu'
+        note: `DEV MODE: Names are "${DEV_NAME_PREFIX} {N}" mapping to ${DEV_EMAIL_BASE}+{N}${DEV_EMAIL_DOMAIN}`
     };
     
     // Create mapping from real names to dev names
@@ -27,10 +35,10 @@ function generateDevEmailContacts() {
     // Sort production contact names for consistent ordering
     const sortedProdNames = Object.keys(prodContacts.contacts).sort();
     
-    // Generate dev contacts with "Maret Rudin-Aulenbach {N}" names
+    // Generate dev contacts with configurable names and emails
     for (const realName of sortedProdNames) {
-        const devName = `Maret Rudin-Aulenbach ${counter}`;
-        const devEmail = `maret.e.rudin-aulenbach+${counter}@vanderbilt.edu`;
+        const devName = `${DEV_NAME_PREFIX} ${counter}`;
+        const devEmail = `${DEV_EMAIL_BASE}+${counter}${DEV_EMAIL_DOMAIN}`;
         
         devContacts.contacts[devName] = devEmail;
         nameMapping[realName] = devName;
