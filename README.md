@@ -6,7 +6,7 @@ An intelligent, automated invoice validation system that processes PDF invoices 
 
 This will be supported until christmas for testing purposes but will be closed later
 
-**Email:** invoice.validator.dev@gmail.com
+**Email:** Configure via `OUTLOOK_EMAIL` in your environment variables
 
 ## Product Overview
 
@@ -89,16 +89,20 @@ Our solution automates the entire workflow, from email scanning to final routing
    AMPLIFY_API_KEY=your-api-key (optional)
    ```
 
-   **Demo Credentials Available:**
-   ```
-   Email: invoice.validator.dev@gmail.com
-   Password: gha5GFR3xub1mzt@rxa
-   ```
+   **Security Note:** Do not commit real credentials. Use environment variables only.
 
 5. **Prepare vendor data (if needed):**
    ```bash
    node convert-excel.js
    ```
+
+### Required Project Files
+
+Some files needed to run this project (such as the Service Agreement Table) are not included in this repository.
+
+Please contact:
+- Maret: `maret.e.rudin-aulenbach@vanderbilt.edu`
+- Stewart: `stewart.s.geisz@vanderbilt.edu`
 
 6. **Start development server:**
    ```bash
@@ -141,7 +145,7 @@ Our solution automates the entire workflow, from email scanning to final routing
 
 ### Environment Modes
 
-- **Development Mode** (`ENVIRONMENT=dev`): All emails redirect to `maret.e.rudin-aulenbach@vanderbilt.edu`
+- **Development Mode** (`ENVIRONMENT=dev`): All emails redirect to your configured development recipient(s)
 
 ### To change the recipients of development emails use generate-dev-email-contacts.js with your own email address as shown in the video demo
 
@@ -198,8 +202,8 @@ Our solution automates the entire workflow, from email scanning to final routing
 In Vercel Dashboard → Project Settings → Environment Variables:
 
 ```env
-OUTLOOK_EMAIL=invoice.validator.dev@gmail.com
-OUTLOOK_PASSWORD=gha5GFR3xub1mzt@rxa
+OUTLOOK_EMAIL=your-email@gmail.com
+OUTLOOK_PASSWORD=your-app-password
 ENVIRONMENT=production
 AMPLIFY_API_URL=your-amplify-url (optional)
 AMPLIFY_API_KEY=your-amplify-key (optional)
