@@ -38,3 +38,5 @@ Thumbs.db
 
 # Audit logs (contains PDFs and sensitive validation data)
 audit_log/
+
+venv/
